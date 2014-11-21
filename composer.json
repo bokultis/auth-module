@@ -1,0 +1,12 @@
+{
+    "name": "horisen/cms-auth-mod",
+    "description": "Horisen CMS auth module",
+    "type": "horisen-cms_mod",
+    "require": {
+        "horisen/cms-core-lib": "*",
+        "horisen/cms-auth-pub-mod": "*"
+    },
+    "extra": {
+        "installer-name": "auth"
+    }
+}

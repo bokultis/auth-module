@@ -1,0 +1,95 @@
+<?php
+    $this->headScript()->appendFile('/plugins/hfb/js/jquery.hfbSelect.js');
+    $this->headScript()->appendFile('/plugins/hfb/js/jquery.hfbSearch.js');
+    $this->headScript()->appendFile('/plugins/hfb/js/jquery.hfbList.js');
+    $this->headScript()->appendFile('/modules/auth/js/list.js');
+?>
+<script type="text/javascript">
+    function getEditUrl(id){
+        return sprintf('/%s/auth/admin-role/role-edit/id/%d',CURR_LANG,id);
+    }
+
+    function editDialog(id){
+        ajaxForm.dialog(getEditUrl(id),{
+            onClose: function(success){
+                if(success){
+                    updateList();
+                }
+            },
+            width: 'auto',
+            height: 'auto'
+        });
+    }
+   
+    initList('/' + CURR_LANG + '/auth/admin-role/role-list/',{},function(me,data){
+        $("#listContainer").find("a.edit").click(function(){
+            editDialog($(this).data('id'));
+            return false;
+        });
+        $("#listContainer").find("a.delete").click(function(){
+            alert('delete'+$(this).data('id'));
+            return false;
+        });
+    });
+    //init select filter
+    $(document).ready(function(){
+        $("#langFilter").change(function(){
+            updateList('langFilter',$(this).val());
+        });
+         $("#filter").click(function(){
+            var params = $("#listContainer").data('params');
+            params['name'] = $('#name').val();
+            $("#listContainer").hfbList({
+                'params': params
+            });
+            return false;
+        })
+        $(".add").click(function(){
+            editDialog(null);
+            return false;
+        });
+    });
+</script>
+<div class="hcms_content_top">
+    <h1><?php echo $this->translate('Roles'); ?> <span class="hcms_button"><a href="#" style="margin:6px 0 0 0;" class="add button"><?php echo $this->translate('Add new'); ?></a></span></h1>
+    <span class="hcms_search">
+        <input name="searchFilter" id="searchFilter" type="text" value="" />
+        <span class="hcms_button"><a href="#" id="searchExecute"><?php echo $this->translate("Search"); ?></a></span>
+    </span>
+</div>
+<div class="hcms_content">
+    <div class="language">
+        <label><?php echo $this->translate('Name');?>:</label>
+        <input type="text" class="_input" name="name" id="name" value="" maxlength="100" style="width:150px;" />
+        <span class="hcms_button"><a href="#" id="filter">Filter</a></span>
+    </div>
+    <table class="hcms_table adminList" width="100%">
+        <thead>
+            <tr>
+                <th><a href="#" class="sort" data-column="name"><?php echo $this->translate('Name');?><b></b></a></th>
+            </tr>
+        </thead>
+        <tbody id="listContainer">
+        </tbody>
+    </table>
+    <div id="pager"></div>
+</div>
+<script type="text/html" id="records_tpl">
+<% if (rows.length > 0){
+    var rowClass = 'odd';
+    %>
+    <% for ( var i = 0; i < rows.length; i++ ){
+        rowClass = (i % 2 == 0)? 'even':'odd';
+    %>
+        <tr class="<%=rowClass%>">
+            <td>
+                <%=rows[i].name%>
+                <ul class="hcms_menu_actions">
+                    <li><a href="#" class="edit" data-id="<%=rows[i].id%>"><?php echo $this->translate('Edit');?></a></li>
+                    <li><a href="#" class="delete" data-id="<%=rows[i].id%>"><?php echo $this->translate('Delete');?></a></li>
+                </ul>
+            </td>
+        </tr>
+    <% } %>
+<% } %>
+</script>

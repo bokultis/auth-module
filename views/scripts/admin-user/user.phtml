@@ -1,0 +1,151 @@
+<?php
+    $this->headScript()->appendFile('/plugins/hfb/js/jquery.hfbSelect.js');
+    $this->headScript()->appendFile('/plugins/hfb/js/jquery.hfbSearch.js');
+    $this->headScript()->appendFile('/plugins/hfb/js/jquery.hfbList.js');
+    $this->headScript()->appendFile('/modules/auth/js/list.js');
+    $this->headScript()->appendFile('/plugins/imagebrowser/jquery.imagebrowserdialog.js');
+?>
+<script type="text/javascript">
+    function getEditUrl(id){
+        return sprintf('/%s/auth/admin-user/user-edit/id/%d',CURR_LANG,id);
+    }
+    function getDeleteUrl(id){
+        return sprintf('/%s/auth/admin-user/user-delete/id/%d',CURR_LANG,id);
+    }
+
+    initList('/' + CURR_LANG + '/auth/admin-user/user-list/',{},function(me,data){
+        $("#listContainer").find("a.edit").click(function(){
+            editDialog($(this).data('id'));
+            return false;
+        });
+        $("#listContainer").find("a.delete").click(function(){
+             if(confirm("<?php echo $this->translate('Are you sure you want to delete this User');?>?")){
+                $.get(getDeleteUrl($(this).data('id')), function(result){
+                    if(result["success"]){
+                        $.flashMessenger(result['message'],{clsName:"ok"});
+                        $("#listContainer").hfbList();
+                    }
+                    else{
+                        $.flashMessenger(result['message'],{
+                            autoClose:false,
+                            modal:true,
+                            clsName:"err"
+                        });
+                    }
+                });
+            }
+            return false;
+        });
+    });
+    //init select filter
+    $(document).ready(function(){
+        $("#langFilter").change(function(){
+            updateList('langFilter',$(this).val());
+        });
+        $("#filter").click(function(){
+            var params = $("#listContainer").data('params');
+            params['username'] = $('#username').val();
+            params['firstLastName'] = $('#firstLastName').val();
+            params['email'] = $('#email').val();
+            params['status'] = $('#status').val();
+            params['role_id'] = $('#role_id').val();
+           $("#listContainer").hfbList({
+                'params': params
+            });
+            return false;
+        })
+        $(".add").click(function(){
+            editDialog(null);
+            return false;
+        });
+    });
+</script>
+<div class="hcms_content_top">
+    <h1><?php echo $this->translate('Users'); ?> 
+        <span class="hcms_button">
+            <a href="#" style="margin:6px 0 0 0;" class="add button">
+                <?php echo $this->translate('Add new'); ?>
+            </a>
+        </span>
+    </h1>
+    <span class="hcms_search">
+        <input name="searchFilter" id="searchFilter" type="text" value="" />
+        <span class="hcms_button"><a href="#" id="searchExecute"><?php echo $this->translate("Search"); ?></a></span>
+    </span>
+</div>
+<div class="hcms_content">
+    <div class="language">
+        <label><?php echo $this->translate('Username');?>:</label>
+        <input type="text" class="_input" name="username" id="username" value="" maxlength="100" style="width:150px;" />
+        <label><?php echo $this->translate('First or Last Name');?>:</label>
+        <input type="text" class="_input" name="firstLastName" id="firstLastName" value="" maxlength="100" style="width:150px;" />
+        <label><?php echo $this->translate('Email');?>:</label>
+        <input type="text" class="_input" name="email" id="email" value="" maxlength="100" style="width:150px;" />
+        <label><?php echo $this->translate('Status');?>:</label>
+        <select id="status" name="status">
+            <option value="" selected="selected"><?php echo $this->translate('Choose Status');?></option>
+            <option value="active"><?php echo $this->translate('Active');?></option>
+            <option value="blocked"><?php echo $this->translate('Blocked');?></option>
+            <option value="pending"><?php echo $this->translate('Pending');?></option>
+        </select>
+        <label><?php echo $this->translate('Role');?>:</label>
+        <select id="role_id" name="role_id">
+            <option value="" selected="selected"><?php echo $this->translate('Choose Role');?></option>
+             <?php  foreach ($this->roles as $role ) {?>
+                <option value="<?php echo $role->get_id() ;?>" <?php if($role->get_id() == $this->data['role_id']){?> selected="selected" <?php }?>> <?php echo $role->get_name(); ?> </option> 
+            <?php }?>
+        </select>
+        <span class="hcms_button"><a href="#" id="filter">Filter</a></span>
+    </div>
+    <table class="hcms_table adminList" width="100%">
+        <thead>
+            <tr>
+                <th><?php echo $this->translate('Image');?></th>
+                <th><a href="#" class="sort" data-column="username"><?php echo $this->translate('Username');?><b></b></a></th>
+                <th><a href="#" class="sort" data-column="first_name"><?php echo $this->translate('First Name');?><b></b></a></th>
+                <th><a href="#" class="sort" data-column="last_name"><?php echo $this->translate('Last Name');?><b></b></a></th>
+                <th><a href="#" class="sort" data-column="email"><?php echo $this->translate('Email');?><b></b></a></th>
+                <th><a href="#" class="sort" data-column="status"><?php echo $this->translate('Status');?><b></b></a></th>
+            </tr>
+        </thead>
+        <tbody id="listContainer">
+        </tbody>
+    </table>
+    <div id="pager"></div>
+</div>
+<script type="text/html" id="records_tpl">
+<% if (rows.length > 0){
+    var rowClass = 'odd';
+    %>
+    <% for ( var i = 0; i < rows.length; i++ ){
+        rowClass = (i % 2 == 0)? 'even':'odd';
+    %>
+        <tr class="<%=rowClass%>">
+            <td width="120">
+                <% if(rows[i].image_path){ %>
+                    <img src="<?php echo $this->fileWebRoot; ?><%=rows[i].image_path%>" width="50" />
+                <% } %>
+            </td>
+            <td>
+                <%=rows[i].username%>
+                <ul class="hcms_menu_actions">
+                    <li><a href="#" class="edit" data-id="<%=rows[i].id%>"><?php echo $this->translate('Edit');?></a></li>
+                    <li><a href="#" class="delete" data-id="<%=rows[i].id%>"><?php echo $this->translate('Delete');?></a></li>
+                </ul>
+            </td>
+            <td>
+                <%=rows[i].first_name%>
+            </td>
+            <td>
+                <%=rows[i].last_name%>
+            </td>
+            <td>
+                <%=rows[i].email%>
+            </td>
+            <td>
+                <%=rows[i].status%>
+            </td>
+        </tr>
+    <% } %>
+<% } %>
+</script>

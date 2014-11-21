@@ -1,0 +1,27 @@
+<form method="post" title="<?php if(isset($this->data['id']) && $this->data['id'] != '') {
+    echo $this->translate('Edit Role');
+}else {
+    echo $this->translate('Add new Role');
+      }?>" action="<?php echo $this->url(array('controller' => 'admin-role', 'action' => 'role-edit')) ?>" enctype="application/x-www-form-urlencoded">
+    <input type="hidden" id="data[id]" value="<?php echo $this->escape($this->data['id']);?>" name="data[id]"/>
+    <dl>
+        <dt class="label"><?php echo $this->translate('Name');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[name]" id="data[name]" value="<?php echo $this->escape($this->data['name']);?>" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['name']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Parent Role');?>:</dt>
+        <dd>
+            <select name="data[parent_id]" id="data[parent_id]" class="_input">
+                <option value="0" ><?php echo $this->translate('No parent'); ?> </option>
+                <?php  foreach ($this->roles as $role ) {?>
+                <option value="<?php echo $role->get_id() ;?>" <?php if($role->get_id() == $this->data['parent_id']){?> selected="selected" <?php }?>> <?php echo $role->get_name(); ?> </option> 
+                <?php }?>
+            </select>
+             <?php echo $this->errorMessages($this->errors['parent_id']);?>
+        </dd>
+    </dl>
+    <div style="margin-top: 20px;">
+        <input type="submit" value="<?php echo $this->translate('Save');?>" name="submit[save]" />
+    </div>
+</form>

@@ -1,0 +1,87 @@
+<form method="post" title="<?php if(isset($this->data['id']) && $this->data['id'] != '') {
+    echo $this->translate('Edit User');
+}else {
+    echo $this->translate('Add new User');
+      }?>" action="<?php echo $this->url(array('controller' => 'admin-user', 'action' => 'user-edit')) ?>" enctype="application/x-www-form-urlencoded">
+    <input type="hidden" id="data[id]" value="<?php echo $this->escape($this->data['id']);?>" name="data[id]"/>
+    <dl id="data">
+        <dt><?php echo $this->translate('Image');?>:</dt>
+        <dd title="<?php echo $this->translate('Image');?>">
+            <input type="text" class="_input userImage" data-var_id="image_path" name="data[image_path]"  id="data[image_path]" value="<?php echo $this->escape($this->data['image_path']);?>" maxlength="100" style="width:150px;" />
+            <?php echo $this->errorMessages($this->errors['image_path']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Username');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[username]" id="data[username]" value="<?php echo $this->escape($this->data['username']);?>" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['username']);?>
+        </dd>
+    </dl>
+    <dl id="new_pass" style="<?php if(!isset($this->data['id']) && $this->data['id'] == '' && $this->data['password'] == '') { ?>display: none<?php } ?>">
+        <dt class="label"><br/></dt>
+        <dd>
+            <a href="#" id="change_pass" ><?php echo $this->translate('Change Password');?></a>
+        </dd>
+    </dl>
+    <dl id="password" style="<?php if(isset($this->data['id']) && $this->data['id'] != '' && $this->data['password'] != '') { ?> display: none; <?php }?>">
+        <dt class="label" ><?php echo $this->translate('Password');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[password]" id="data[password]" value="" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['password']);?>
+        </dd>
+        <dt class="label" ><?php echo $this->translate('Password confirmation');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[pass_confirm]" id="data[pass_confirm]" value="" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['pass_confirm']);?>
+        </dd>
+     </dl>   
+    <dl>
+        <dt class="label"><?php echo $this->translate('First Name');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[first_name]" id="data[first_name]" value="<?php echo $this->escape($this->data['first_name']);?>" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['first_name']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Last Name');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[last_name]" id="data[last_name]" value="<?php echo $this->escape($this->data['last_name']);?>" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['last_name']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Email');?>:</dt>
+        <dd>
+            <input type="text" class="_input" name="data[email]" id="data[email]" value="<?php echo $this->escape($this->data['email']);?>" maxlength="100" style="width:250px;" />
+            <?php echo $this->errorMessages($this->errors['email']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Status');?>:</dt>
+        <dd>
+            <select name="data[status]" id="data[status]">
+                <option value="active" <?php if($this->data['status'] == 'active' ) {?> selected="selected" <?php } ?>><?php echo $this->translate('Active');?></option>
+                <option value="blocked" <?php if($this->data['status'] == 'blocked' ) {?> selected="selected" <?php } ?>><?php echo $this->translate('Blocked');?></option>
+                <option value="pending"  <?php if($this->data['status'] == 'pending' ) {?> selected="selected" <?php } ?>><?php echo $this->translate('Pending');?></option>
+            </select>
+            <?php echo $this->errorMessages($this->errors['status']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Role');?>:</dt>
+        <dd>
+            <select name="data[role_id]" id="data[role_id]" class="_input">
+                <option value="" ><?php echo $this->translate('Select Role'); ?> </option>
+                <?php  foreach ($this->roles as $role ) {?>
+                <option value="<?php echo $role->get_id() ;?>" <?php if($role->get_id() == $this->data['role_id']){?> selected="selected" <?php }?>> <?php echo $role->get_name(); ?> </option> 
+                <?php }?>
+            </select>
+             <?php echo $this->errorMessages($this->errors['role_id']);?>
+        </dd>
+        <dt class="label"><?php echo $this->translate('Lang');?>:</dt>
+        <dd>
+            <select name="data[lang]" id="data[lang]" class="_input">
+                <option value="" ><?php echo $this->translate('Select Language'); ?> </option>
+                <?php  foreach ($this->languages as $key =>  $val) {?>
+                <option value="<?php echo $val['code'] ;?>" <?php if($val['code'] == $this->data['lang']){?> selected="selected" <?php }?>> <?php echo $val['name']; ?> </option> 
+                <?php }?>
+            </select>
+             <?php echo $this->errorMessages($this->errors['lang']);?>
+        </dd>
+    </dl>
+    <div style="margin-top: 20px;">
+        <button type="submit" class="hcms_button submit" value="<?php echo $this->translate('Save');?>" name="submit[save]" ><?php echo $this->translate('Save');?></button>
+        <button type="submit" class="hcms_button submit" value="<?php echo $this->translate('Cancel');?>" name="submit[cancel]" ><?php echo $this->translate('Cancel');?></button>
+    </div>
+</form>

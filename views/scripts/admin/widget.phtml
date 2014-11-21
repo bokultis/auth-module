@@ -1,0 +1,8 @@
+<ul>
+    <li>
+        <a href="<?php echo $this->url(array('action'=>'user-edit','controller'=>'admin-user','module'=> 'auth','id'=>$this->admin->get_id())); ?>"><?php echo $this->translate('Manage Your Account'); ?></a> |
+        <a href="<?php echo $this->url(array('action'=>'logout','controller'=>'index','module'=> 'admin')); ?>"><?php echo $this->translate('Logout'); ?></a>
+    </li>
+    <li><a href="<?php echo $this->url(array('action'=>'user','controller'=>'admin-user','module'=> 'auth')); ?>"><?php echo $this->translate('Manage Users'); ?></a></li>
+    <li><a href="<?php echo $this->url(array('action'=>'role','controller'=>'admin-role','module'=> 'auth')); ?>"><?php echo $this->translate('Manage Roles'); ?></a></li>
+</ul>
